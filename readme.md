@@ -51,7 +51,7 @@ This application consists of four microservices: User, Product, Payment, and Not
 
 ### 4. Notification Service
 
-- **Description**: Consumes messages from the `E!SEND_SOCKET` queue and sends notifications to the User service via WebSocket.
+- **Description**: Consumes messages from the `E!SEND_SOCKET` queue and sends notifications to the User service via Socket.IO.
 
 ## Business Flow
 
@@ -69,11 +69,11 @@ This application consists of four microservices: User, Product, Payment, and Not
 
 3. **Service Notification**:
    - Receives messages from the Payment service via Message Broker.
-   - Sends notifications to the User service via WebSocket.
+   - Sends notifications to the User service via Socket.IO.
    - **Expected Output**: Confirmation that the notification has been successfully sent to User.
 
 4. **Service User**:
-   - Receives notifications from the Notification service via WebSocket.
+   - Receives notifications from the Notification service via Socket.IO.
    - **Expected Output**: The received notification should include transaction details such as productId, userId, qty, and bill.
 
 ## Running the Services
@@ -130,5 +130,5 @@ This application consists of four microservices: User, Product, Payment, and Not
 ## Notes
 
 - Ensure that all services are running and accessible on the specified ports.
-- The Notification service uses WebSocket to send notifications to the User service.
+- The Notification service uses Socket.IO to send notifications to the User service.
 - The RabbitMQ message broker is used for communication between the services.
