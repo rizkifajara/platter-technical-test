@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  notification:
+    build:
+      context: ./notification
+      dockerfile: Dockerfile.notification
+    ports:
+      - "9300:9300"
+    environment:
+      - NODE_ENV=development
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+
+  payment:
+    build:
+      context: ./payment
+      dockerfile: Dockerfile.payment
+    ports:
+      - "9302:9302"
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=payment
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+
+  product:
+    build:
+      context: ./product
+      dockerfile: Dockerfile.product
+    ports:
+      - "9301:9301"
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=product
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq
+      - USER_SERVICE_URL=http://user:9303
+
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile.user
+    ports:
+      - "9303:9303"
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_PORT=5432
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  postgres_data:
